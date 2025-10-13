@@ -1,101 +1,112 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() {
-    int selection;
-    int price;
-    int amount;
+// Drink info
+const char* drinks[] = {"Coke", "Pepsi", "Sprite", "Fanta", "Mirinda"};
+const int prices[] = {1500, 1000, 1500, 1500, 1000};
+int stock[] = {5, 5, 5, 5, 5}; // Initial stock
 
-    //welcome to vending machine preoject//
-   printf("Select an item: \n");
-    printf("1. Soda       - 1500 UGX\n");
-    printf("2. Water     - 1000 UGX\n");
-    printf("3. Juice     - 2000 UGX\n");
-    printf("4. Crisps    - 1200 UGX\n");
-    printf("5. Chocolate - 2500 UGX\n");
-return 0;
-   int item_number;
-   int credit;
-   int quantity;
-   int change;
-   //Prompt the user for item number
-printf("Enter item number: \n");
-scanf("%d",&item_number);
-//Prompt the user for item quantity
-printf("Enter item quantity: \n");
-scanf("%d", &quantity);
-//Prompt the user to insert the amount//
-printf("Enter your money: \n");
-scanf("%d", &credit);
-//Get the price of the selected item
-if (quantity >=1 &&item_number <=4) {
-     int price = (price[item_number -1 ]);
-//Adjust index since array is 0-based
-} else {
-printf("Invalid item number.\n");
-return 1;
-}
-//Compare credit with the price
-if (credit <price) {
-    printf("Insufficient funds. Please add more money.\n");}
-    if (credit == price) {
-        printf("Comfirm purchase.\n",item_number);
+// Denominations
+int denominations[] = {50000, 20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50};
+int denom_count = sizeof(denominations) / sizeof(denominations[0]);
+
+/*
+function name: calculate_change
+arguments: int change
+description: Breaks down the change amount into notes and coins based on predefined denominations and prints each
+return type: void
+*/
+void calculate_change(int change) {
+    printf("Change to return: UGX%d\n", change);
+    for (int i = 0; i < denom_count; i++) {
+        if (change >= denominations[i]) {
+            int count = change / denominations[i];
+            change -= count * denominations[i];
+            if (denominations[i] >= 1000)
+                printf("%d notes: %d\n", denominations[i], count);
+            else
+                printf("%d coins: %d\n", denominations[i], count);
+        }
     }
-else (credit > price); {
-        printf("Dispense item. Your change is %d UGX.\n", item_number, credit - price);
-return 0;
 }
-switch (change)
 
-   case 1:
-       number_of_notes =change/50000;
-       change = change-(number_of_notes*50000);
-       printf("Change = %d\n", change);
-       break;
-    case 2:
-       number_of_notes =change/20000;
-       change = change-(number_of_notes*20000);
-       printf("Change = %d\n", change);
-       break;
-    case 3:
-       number_of_notes =change/10000;
-       change = change-(number_of_notes*10000);
-       printf("Change = %d\n", change);
-    case 4:
-       number_of_notes =change/5000;
-       change = change-(number_of_notes*5000);
-       printf("Change = %d\n", change);
-       break;
-    case 5:
-       number_of_notes =change/2000;
-       change = change-(number_of_notes*2000);
-       printf("Change = %d\n", change);
-       break;
-    case 6:
-       number_of_notes =change/1000;
-       change = change-(number_of_notes*1000);
-       printf("Change = %d\n", change);
-       break;
-    case 7:
-       number_of_coins =change/500;
-       change = change-(number_of_coins*500);
-       printf("Change = %d\n", change);
-       break;
-    case 8:
-       number_of_coins =change/200;
-       change = change-(number_of_coins*200);
-       printf("Change = %d\n", change);
-       break;
-    case 9:
-       number_of_coins =change/100;
-       change = change-(number_of_coins*100);
-       printf("Change = %d\n", change);
-       break;
-    case 10:
-       number_of_coins =change/50;
-       change = change-(number_of_coins*50);
-       printf("Change = %d\n", change);
-       break;
+/*
+function name: get_continue_choice
+arguments: none
+description: Asks the user if they want to make another purchase, ensures valid input (0 or 1)
+return type: int (0 for No, 1 for Yes)
+*/
+int get_continue_choice() {
+    char buffer[100];
+    int choice;
 
+    while (1) {
+        printf("\nWould you like another purchase? (1 for Yes, 0 for No): ");
+        if (fgets(buffer, sizeof(buffer), stdin)) {
+            if (sscanf(buffer, "%d", &choice) == 1) {
+                if (choice == 0 || choice == 1) {
+                    return choice;
+                }
+            }
+        }
+        printf("Invalid input! Please enter 1 for Yes or 0 for No.\n");
+    }
+}
 
+/*
+function name: main
+arguments: none
+description: Entry point of the vending machine program; handles drink selection, payment, stock update, and looping
+return type: int
+*/
+int main() {
+    int continue_shopping = 1;
 
+    while (continue_shopping) {
+        printf("\nAvailable Drinks:\n");
+        for (int i = 0; i < 5; i++) {
+            printf("%d. %s (UGX%d) - Stock: %d\n", i + 1, drinks[i], prices[i], stock[i]);
+        }
+
+        int choice;
+        printf("Select a drink (1-5): ");
+        if (scanf("%d", &choice) != 1 || choice < 1 || choice > 5) {
+            printf("Invalid selection. Try again.\n");
+            while (getchar() != '\n'); // clear buffer
+            continue;
+        }
+
+        if (stock[choice - 1] == 0) {
+            printf("Sorry, %s is out of stock!\n", drinks[choice - 1]);
+            continue;
+        }
+
+        int price = prices[choice - 1];
+        int credit;
+        printf("You selected %s. Please insert UGX%d: ", drinks[choice - 1], price);
+        if (scanf("%d", &credit) != 1 || credit <= 0) {
+            printf("Invalid amount inserted. Please top up.\n");
+            while (getchar() != '\n'); // clear buffer
+            continue;
+        }
+
+        if (credit < price) {
+            printf("Insufficient amount. Top up.\n");
+            continue;
+        }
+
+        int change = credit - price;
+        stock[choice - 1]--;  // reduce stock
+        printf("Enjoy your %s!\n", drinks[choice - 1]);
+        if (change > 0) {
+            calculate_change(change);
+        } else {
+            printf("No change to return.\n");
+        }
+
+        continue_shopping = get_continue_choice();
+    }
+
+    printf("Thank you for using the vending machine!\n");
+    return 0;
+}
