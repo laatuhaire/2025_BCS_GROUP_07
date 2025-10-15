@@ -60,9 +60,10 @@ int get_price(int drink_index);
 const char* get_drink_name(int drink_index);
 
 
+
+
+
+
 #endif // VENDING_MACHINE_H_INCLUDED
 
-
-
-#endif // VENDING_MACHINE_H_INCLUDED
 
