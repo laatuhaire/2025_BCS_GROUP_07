@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "VENDING MACHINE.h"
+#include "VENDING MACHINE.c"
 // Drink info
 const char* drinks[] = {"Coke", "Pepsi", "Sprite", "Fanta", "Mirinda"};
 const int prices[] = {1500, 1000, 1500, 1500, 1000};
@@ -110,3 +111,4 @@ int main() {
     printf("Thank you for using the vending machine!\n");
     return 0;
 }
+
